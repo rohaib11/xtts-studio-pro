@@ -1,61 +1,64 @@
+
 # 🎙️ XTTS Studio Pro — AI Voice Cloning Dashboard
 
 <p align="center">
-   <img src="https://img.shields.io/badge/Status-Active-emerald" />
+  <img src="https://img.shields.io/badge/Status-Active-emerald" />
   <img src="https://img.shields.io/badge/Python-3.10%2B-blue" />
   <img src="https://img.shields.io/badge/React-18-cyan" />
   <img src="https://img.shields.io/badge/Model-XTTS_v2-purple" />
   <img src="https://img.shields.io/badge/Backend-FastAPI-green" />
-
- 
+  <img src="https://img.shields.io/badge/GPU-Optimized-orange" />
 </p>
 
 <p align="center">
-  <b>High‑Performance AI Voice Cloning & Text‑to‑Speech Platform</b><br>
-  Cyberpunk UI • GPU Optimized • Production Ready
+  <b>High-Performance AI Voice Cloning & Text-to-Speech Platform</b><br>
+  Modern UI • GPU-Safe • Production-Grade • XTTS v2 Powered
 </p>
 
 ---
 
 ## 🚀 Overview
 
-**XTTS Studio Pro** is a modern, production‑grade **AI Voice Cloning dashboard** that allows you to generate natural, human‑like speech using short reference audios.
+**XTTS Studio Pro** is a full-stack **AI Voice Cloning & Text-to-Speech dashboard** built on **Coqui XTTS v2**, enabling realistic multilingual speech generation using short voice references.
 
 Designed for:
-- 🎥 YouTube creators
+- 🎥 Content creators & YouTubers
 - 🎮 Game developers
-- 📚 Audiobook production
+- 📚 Audiobook narration
 - 🤖 AI assistants
+- 🏢 Enterprise internal tools
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-✅ 6‑Second Voice Cloning  
-✅ Multi‑Language Speech (EN, UR, HI, AR, ES, FR, etc.)  
-✅ Real‑time Audio Generation  
-✅ Cyberpunk Glassmorphism UI  
-✅ Thread‑Safe GPU Inference  
-✅ Session Audio History  
-✅ MP3 / WAV Export  
-✅ Windows‑Safe File Handling  
+### 🎙️ Voice & Speech
+- 6–10 second voice cloning
+- Multilingual TTS (EN, UR, HI, AR, ES, FR, DE, ZH, JA)
+- WAV & MP3 output formats
+- Natural neural speech synthesis
+- Emotion preserved from reference voice
 
----
+### 📤 Speaker Management
+- Upload speakers via UI (Drag & Drop)
+- Supports WAV, MP3, M4A, FLAC
+- Auto speaker detection
+- Windows-safe file handling
 
-## 🖼️ Screenshots
+### ⚙️ Backend Engine Enhancements
+- Thread-safe GPU inference
+- Global model preload
+- Automatic audio cleanup
+- FFmpeg audio normalization
+- CPU fallback support
 
-> Add your screenshots here after deployment
-
-```
-docs/screenshots/dashboard.png
-docs/screenshots/voice_clone.png
-docs/screenshots/audio_history.png
-```
-
-Example:
-```md
-![Dashboard](docs/screenshots/dashboard.png)
-```
+### 🖥️ Frontend Experience
+- Glassmorphism modern UI
+- Real-time audio playback
+- Session-based audio history
+- Upload progress & notifications
+- Server health monitoring
+- Audio visualizer
 
 ---
 
@@ -67,11 +70,11 @@ Example:
 - Torchaudio
 - Coqui XTTS v2
 - FFmpeg
+- Pydub
 
 ### Frontend
 - React (Vite)
 - Tailwind CSS
-- Framer Motion
 - Lucide Icons
 
 ---
@@ -82,36 +85,23 @@ Example:
 - Python 3.10+
 - Node.js 18+
 - FFmpeg (in PATH)
-- NVIDIA GPU (optional but recommended)
-
----
+- NVIDIA GPU (recommended)
 
 ### Backend Setup
-
 ```bash
 cd backend
 python -m venv venv
-
-# Windows
 venv\Scripts\activate
-
-# Linux / macOS
-source venv/bin/activate
-
 pip install -r requirements.txt
 ```
 
-#### 🔥 GPU Acceleration (Optional)
-
+### GPU Acceleration (Optional)
 ```bash
 pip uninstall torch torchaudio -y
 pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
----
-
 ### Frontend Setup
-
 ```bash
 cd frontend
 npm install
@@ -122,44 +112,39 @@ npm install
 ## ▶️ Running the App
 
 ### Backend
-
 ```bash
 uvicorn main:app --reload
 ```
-📍 http://127.0.0.1:8000
+API: http://127.0.0.1:8000  
+Docs: http://127.0.0.1:8000/docs
 
- 📍 http://127.0.0.1:8000/docs
 ### Frontend
-
 ```bash
 npm run dev
 ```
-📍 http://localhost:5173
+UI: http://localhost:5173
 
 ---
 
 ## 🎙️ Adding New Voices
 
-1. Prepare a **clean 6–10 second WAV file**
-2. Rename it (example: `rohaib.wav`)
-3. Place it in:
+### Upload via UI (Recommended)
+- Drag & drop a voice file
+- Supported formats: WAV, MP3, M4A, FLAC
+- Speaker appears instantly
 
+### Manual Method
+Place audio in:
 ```
 backend/speakers/
 ```
-
-4. Refresh UI → Voice appears automatically
 
 ---
 
 ## 🧠 API Overview
 
 ### Generate Speech
-
-```http
 POST /tts
-```
-
 ```json
 {
   "text": "Hello world",
@@ -169,53 +154,50 @@ POST /tts
 }
 ```
 
+### Upload Speaker
+POST /upload-speaker
+
+### Health Check
+GET /health
+
 ---
 
 ## 📂 Project Structure
-```json
+```
 xtts-studio-pro/
-│
 ├── backend/
 │   ├── main.py
 │   ├── tts_engine.py
 │   ├── speakers/
 │   ├── output/
 │   └── requirements.txt
-│
 ├── frontend/
 │   ├── src/
 │   └── package.json
-│
 └── README.md
 ```
 
-## 🛡️ Troubleshooting
+---
 
-### Torch / Codec Errors
-```bash
-pip install transformers==4.40.2 accelerate==0.30.1 torchaudio<2.6
-```
-
-### Slow Generation
-➡️ You are on CPU. Install CUDA PyTorch.
-
-### No Speakers Found
-➡️ Ensure `.wav` files exist in `backend/speakers/`
+## 🗺️ Roadmap
+- Streaming TTS
+- Usage analytics
+- API key authentication
+- Emotion & style control
+- Docker & cloud deployment
 
 ---
 
 ## 📜 License
-
-Educational & Research Use Only  
-Follow Coqui XTTS (CPML) license for commercial usage.
+Educational & Research Use  
+Follow Coqui XTTS (CPML) license for commercial use.
 
 ---
 
 ## 👨‍💻 Author
-
 **Muhammad Rohaib**  
-🚀 AI Engineer | Full‑Stack Developer
+AI Engineer | Full-Stack Developer
 
 ---
 
-⭐ If you like this project, give it a star!
+⭐ Star the repo if you like it!
