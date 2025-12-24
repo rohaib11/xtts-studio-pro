@@ -1,4 +1,4 @@
-echo "# 🎙️ XTTS Studio Pro - AI Voice Cloning Dashboard
+ 🎙️ XTTS Studio Pro - AI Voice Cloning Dashboard
 
 ![Project Status](https://img.shields.io/badge/Status-Active-emerald)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
