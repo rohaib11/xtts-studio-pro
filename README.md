@@ -1,8 +1,12 @@
 # 🎙️ XTTS Studio Pro — AI Voice Cloning Dashboard
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Status-Active-emerald" />
- 
+   <img src="https://img.shields.io/badge/Status-Active-emerald" />
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue" />
+  <img src="https://img.shields.io/badge/React-18-cyan" />
+  <img src="https://img.shields.io/badge/Model-XTTS_v2-purple" />
+  <img src="https://img.shields.io/badge/Backend-FastAPI-green" />
+
  
 </p>
 
