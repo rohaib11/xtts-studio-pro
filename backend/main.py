@@ -1,6 +1,9 @@
-from fastapi import FastAPI, HTTPException, BackgroundTasks, status
+# -------------------------------
+# UPDATED IMPORTS (SAFE ADDITION)
+# -------------------------------
+from fastapi import FastAPI, HTTPException, BackgroundTasks, status, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 from enum import Enum
@@ -9,8 +12,10 @@ import os
 import shutil
 import subprocess
 
-# Import XTTS engine (UNCHANGED)
-from tts_engine import engine, OUTPUT_DIR
+# -------------------------------
+# XTTS ENGINE IMPORT (UPDATED)
+# -------------------------------
+from tts_engine import engine, OUTPUT_DIR, SPEAKERS_DIR
 
 # -------------------------------
 # DATA MODELS (UNCHANGED)
@@ -49,7 +54,7 @@ class TTSRequest(BaseModel):
         return v
 
 # -------------------------------
-# APP SETUP
+# APP SETUP (UNCHANGED)
 # -------------------------------
 
 app = FastAPI(
@@ -61,7 +66,7 @@ app = FastAPI(
 )
 
 # -------------------------------
-# CORS (SAFE DEFAULT)
+# CORS (UNCHANGED)
 # -------------------------------
 
 app.add_middleware(
@@ -79,11 +84,10 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory=OUTPUT_DIR), name="static")
 
 # -------------------------------
-# STARTUP CHECKS (SAFE ADDITION)
+# STARTUP CHECKS (UNCHANGED)
 # -------------------------------
 
 def check_ffmpeg():
-    """Non-breaking FFmpeg availability check"""
     if shutil.which("ffmpeg") is None:
         print("⚠️ WARNING: FFmpeg not found. MP3 conversion may fail.")
 
@@ -93,7 +97,7 @@ async def startup_event():
     engine.load_model()
 
 # -------------------------------
-# ENDPOINTS
+# EXISTING ENDPOINTS (UNCHANGED)
 # -------------------------------
 
 @app.get("/health")
@@ -116,19 +120,13 @@ def get_speakers():
 
 @app.post("/tts", status_code=200)
 def generate_speech(req: TTSRequest, background_tasks: BackgroundTasks):
-    """
-    Blocking endpoint intentionally (GPU safe).
-    Existing logic preserved.
-    """
     try:
-        # Validate speaker
         if req.speaker not in engine.get_speakers():
             raise HTTPException(
                 status_code=404,
                 detail=f"Speaker '{req.speaker}' not found"
             )
 
-        # Generate WAV
         output_path = engine.generate(
             req.text,
             req.speaker,
@@ -138,12 +136,10 @@ def generate_speech(req: TTSRequest, background_tasks: BackgroundTasks):
         final_path = output_path
         media_type = "audio/wav"
 
-        # Optional MP3 conversion (UNCHANGED FLOW)
         if req.format == "mp3":
             final_path = engine.convert_to_mp3(output_path)
             media_type = "audio/mpeg"
 
-        # 🧹 SAFE delayed cleanup (ENHANCEMENT)
         background_tasks.add_task(
             engine.cleanup,
             max_age_seconds=7200
@@ -156,10 +152,7 @@ def generate_speech(req: TTSRequest, background_tasks: BackgroundTasks):
         )
 
     except ValueError as ve:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(ve)
-        )
+        raise HTTPException(status_code=400, detail=str(ve))
     except HTTPException:
         raise
     except Exception as e:
@@ -168,3 +161,40 @@ def generate_speech(req: TTSRequest, background_tasks: BackgroundTasks):
             status_code=500,
             detail="Internal Generation Error"
         )
+
+# --------------------------------------------------
+# ✅ NEW ENDPOINT: UPLOAD SPEAKER (SAFE ADDITION)
+# --------------------------------------------------
+
+@app.post("/upload-speaker")
+async def upload_speaker(file: UploadFile = File(...)):
+    """
+    Allows users to upload a new reference voice (wav/mp3/m4a/flac)
+    """
+    try:
+        allowed_extensions = {".wav", ".mp3", ".m4a", ".flac"}
+        filename = file.filename.lower()
+
+        if not any(filename.endswith(ext) for ext in allowed_extensions):
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid file type. Only .wav, .mp3, .m4a, .flac allowed."
+            )
+
+        safe_name = "".join(
+            c for c in file.filename if c.isalnum() or c in "._-"
+        )
+
+        save_path = SPEAKERS_DIR / safe_name
+
+        with open(save_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        return {
+            "status": "success",
+            "speaker": save_path.stem,
+            "filename": safe_name
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
