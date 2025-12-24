@@ -2,10 +2,8 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Status-Active-emerald" />
-  <img src="https://img.shields.io/badge/Python-3.10%2B-blue" />
-  <img src="https://img.shields.io/badge/React-18-cyan" />
-  <img src="https://img.shields.io/badge/Model-XTTS_v2-purple" />
-  <img src="https://img.shields.io/badge/Backend-FastAPI-green" />
+ 
+ 
 </p>
 
 <p align="center">
@@ -167,6 +165,24 @@ POST /tts
 ```
 
 ---
+
+## 📂 Project Structure
+```json
+xtts-studio-pro/
+│
+├── backend/
+│   ├── main.py
+│   ├── tts_engine.py
+│   ├── speakers/
+│   ├── output/
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── src/
+│   └── package.json
+│
+└── README.md
+```
 
 ## 🛡️ Troubleshooting
 
